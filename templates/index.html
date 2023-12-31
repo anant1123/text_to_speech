@@ -1,1 +1,142 @@
 
+<!-- templates/index_upload.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-Speech Upload</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        header {
+            background: #333;
+            color: white;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #bbb 1px solid;
+        }
+
+        header a {
+            color: #ffffff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+
+        header ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            overflow: hidden;
+        }
+
+        header li {
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
+            position: relative;
+        }
+
+        header #branding {
+            float: left;
+        }
+
+        header #branding h1 {
+            margin: 0;
+        }
+
+        header .highlight, header .current a {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        header a:hover {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        #audio-controls {
+            margin-top: 20px;
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const fileInput = document.getElementById("file");
+            const textArea = document.getElementById("text");
+            const audioControls = document.getElementById("audio-controls");
+
+            fileInput.addEventListener("change", function () {
+                // Reset the text area when a file is selected
+                textArea.value = "";
+            });
+
+            textArea.addEventListener("input", function () {
+                // Reset the file input when text is entered
+                fileInput.value = "";
+
+                // Update the real-time preview
+                updatePreview(textArea.value);
+            });
+
+            function updatePreview(text) {
+                const preview = document.getElementById("preview");
+                preview.textContent = text;
+
+                // Synthesize speech and add audio controls
+                const synth = window.speechSynthesis;
+                const utterance = new SpeechSynthesisUtterance(text);
+
+                synth.cancel(); // Cancel any previous speech synthesis
+                synth.speak(utterance);
+
+                // Add audio controls
+                audioControls.innerHTML = `
+                    <audio controls>
+                        <source src="data:audio/mp3;base64,${btoa(utterance.text)}" type="audio/mp3">
+                        Your browser does not support the audio tag.
+                    </audio>
+                `;
+            }
+        });
+    </script>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <div id="branding">
+            <h1><span class="highlight">Text-to-Speech</span> Upload</h1>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <h1>Text-to-Speech</h1>
+    <form action="/tts" method="post" enctype="multipart/form-data">
+        <label for="text">Enter text:</label>
+        <textarea id="text" name="text" rows="4" cols="50"></textarea><br>
+        <label for="file">Upload document file:</label>
+        <input type="file" name="file" id="file"><br>
+        <input type="submit" value="Generate Audio">
+    </form>
+
+    <div id="preview"></div>
+    <div id="audio-controls"></div>
+</div>
+
+</body>
+</html>
