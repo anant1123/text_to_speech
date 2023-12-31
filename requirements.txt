@@ -1,0 +1,4 @@
+flask
+gtts
+chardet
+gunicorn
