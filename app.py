@@ -1,11 +1,7 @@
 # app.py
 from flask import Flask, render_template, request, send_file
 from gtts import gTTS
-from werkzeug.utils import secure_filename
-import os
 import chardet
-from openpyxl import load_workbook
-
 app = Flask(__name__)
 
 # Specify the folder where uploaded files will be stored
